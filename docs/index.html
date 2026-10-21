@@ -379,6 +379,7 @@
           <a href="#usage">Usage</a>
           <a href="#stack" class="hide-sm">Stack</a>
           <a href="#extend" class="hide-sm">Extend</a>
+          <a href="#sdd">SDD</a>
           <a class="gh" href="https://github.com/CesarZuniga/autostackrc" aria-label="GitHub repository">
             <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
               <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/>
@@ -430,7 +431,7 @@
             <div class="step">
               <div class="k">DETECT</div>
               <h3>Scan the project</h3>
-              <p>Reads <code>package.json</code>, config files, and file extensions to identify 44 technologies.</p>
+              <p>Reads dependency manifests (<code>package.json</code>, <code>pyproject.toml</code>, <code>requirements.txt</code>, <code>pom.xml</code>, Gradle, <code>.csproj</code>, <code>composer.json</code>, <code>Gemfile</code>), config files, and file extensions to identify 48 technologies.</p>
             </div>
             <div class="step">
               <div class="k">ASSEMBLE</div>
@@ -524,7 +525,7 @@ npx autostackrc <span class="f">--coder</span> opencode</pre>
                 <tr><td><code>--no-llm</code></td><td>Skip enrichment, emit static templates only</td></tr>
                 <tr><td><code>--coder &lt;id&gt;</code></td><td>Force coder CLI: <code>claude</code>, <code>opencode</code>, <code>cursor-agent</code></td></tr>
                 <tr><td><code>--model &lt;id&gt;</code></td><td>Model hint passed to the coder CLI (if supported)</td></tr>
-                <tr><td><code>-v, --verbose</code></td><td>Show traces and error detail</td></tr>
+                <tr><td><code>-v, --verbose</code></td><td>Show traces and error detail (incl. skipped malformed manifests)</td></tr>
               </tbody>
             </table>
           </div>
@@ -551,6 +552,58 @@ npx autostackrc <span class="f">--coder</span> opencode</pre>
 
 <span class="c"># add an assistant</span>
 → add a writer in <span class="f">writers/</span>, register in <span class="f">writer.ts</span> + <span class="f">agents.ts</span></pre>
+        </div>
+      </section>
+
+      <section id="sdd" aria-labelledby="sdd-title">
+        <div class="wrap reveal">
+          <h2 id="sdd-title"><span class="n" aria-hidden="true">06</span>Spec-Driven Development <span class="badge">In progress · v0.1.0</span></h2>
+          <p class="sub">
+            Next release: every run will also generate a complete SDD harness adapted to your stack and to each
+            assistant — so your AI tools define <em>what</em> to build before writing code, and prove it afterwards.
+          </p>
+          <div class="steps">
+            <div class="step">
+              <div class="k">DEFINE</div>
+              <h3>Constitution &amp; spec</h3>
+              <p><code>docs/constitution.md</code> with non-negotiable principles, and <code>specs/NNN-name/spec.md</code> with requirements in EARS notation.</p>
+            </div>
+            <div class="step">
+              <div class="k">PLAN</div>
+              <h3>Clarify, plan, tasks</h3>
+              <p>A QA-style review of the spec, then <code>plan.md</code> and small <code>tasks.md</code> items — each gated by your approval.</p>
+            </div>
+            <div class="step">
+              <div class="k">BUILD</div>
+              <h3>One task at a time</h3>
+              <p>Tests first, using <em>your</em> stack's test command (<code>vitest</code>, <code>pytest</code>, <code>dotnet test</code>, <code>go test</code>…).</p>
+            </div>
+            <div class="step">
+              <div class="k">VALIDATE</div>
+              <h3>Requirement by requirement</h3>
+              <p>Every requirement traced to a passing test, with a final verdict.</p>
+            </div>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr><th>Planned</th><th>What it generates</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Slash commands</td><td><code>/sdd-constitution</code>, <code>/sdd-spec</code>, <code>/sdd-clarify</code>, <code>/sdd-plan</code>, <code>/sdd-tasks</code>, <code>/sdd-implement</code>, <code>/sdd-validate</code>, <code>/sdd-change</code>, <code>/sdd-status</code></td></tr>
+                <tr><td>Skill</td><td><code>sdd</code> — workflow, spec template, EARS and testability guide for your language</td></tr>
+                <tr><td>Agents</td><td><code>coordinator</code>, <code>planner</code>, <code>implementer</code>, <code>reviewer</code> with least-privilege permissions</td></tr>
+                <tr><td>Project docs</td><td><code>docs/constitution.md</code>, <code>MEMORY.md</code>, <code>specs/</code> — created once, never overwritten</td></tr>
+                <tr><td>CLI</td><td><code>npx autostackrc sdd check</code> (CI: EARS lint + requirement→test traceability), <code>sdd status</code>, <code>update</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="note">
+            <b>Not available yet.</b> Today autostackrc generates rules and commands per stack (sections 01–05).
+            The SDD module is being built — with SDD itself: see the
+            <a href="https://github.com/CesarZuniga/autostackrc/blob/main/docs/constitution.md">constitution</a> and
+            <a href="https://github.com/CesarZuniga/autostackrc/tree/main/specs">specs</a>. Spec 001 (multi-ecosystem detection, the foundation) is done.
+          </div>
         </div>
       </section>
     </main>
@@ -583,7 +636,7 @@ npx autostackrc <span class="f">--coder</span> opencode</pre>
       var TECH = [
         "TypeScript","Node.js","React","Next.js","Vue","Svelte","Angular","Astro","SolidJS",
         "Remix","Tailwind CSS","Expo / React Native","Electron","Tauri","Express","Hono","NestJS",
-        "tRPC","GraphQL","Zod","Python","FastAPI","Django","Flask","Go","Rust",".NET",
+        "tRPC","GraphQL","Zod","Python","FastAPI","Django","Flask","Go","Rust",".NET","Java","Kotlin","PHP","Ruby",
         "Spring Boot","Laravel","Ruby on Rails","Prisma","Drizzle ORM","Mongoose","Supabase",
         "Vitest","Jest","Playwright","Vite","Turborepo","ESLint","Docker","Terraform","Bun","Deno"
       ];
