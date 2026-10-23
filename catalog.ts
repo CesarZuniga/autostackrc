@@ -57,7 +57,7 @@ const TECH_SEEDS: TechSeed[] = [
   { id: "nestjs", detect: {"packages":["@nestjs/core"]}, commands: ["endpoint","optimize"] },
   { id: "python", detect: {"configFiles":["pyproject.toml","requirements.txt","setup.py","Pipfile"],"extensions":[".py"]} },
   { id: "fastapi", detect: {"packages":["fastapi"]}, commands: ["endpoint","optimize"] },
-  { id: "django", detect: {"configFiles":["manage.py"]}, commands: ["migration","optimize"] },
+  { id: "django", detect: {"packages":["django"],"configFiles":["manage.py"]}, commands: ["migration","optimize"] },
   { id: "flask", detect: {"packages":["flask"]}, commands: ["endpoint"] },
   { id: "go", detect: {"configFiles":["go.mod"],"extensions":[".go"]} },
   { id: "rust", detect: {"configFiles":["Cargo.toml"],"extensions":[".rs"]} },
@@ -82,11 +82,17 @@ const TECH_SEEDS: TechSeed[] = [
   { id: "vite", detect: {"packages":["vite"],"configFiles":["vite.config.ts","vite.config.js"]} },
   { id: "turborepo", detect: {"packages":["turbo"],"configFiles":["turbo.json"]} },
   { id: "eslint", detect: {"packages":["eslint"],"configFiles":["eslint.config.js","eslint.config.mjs",".eslintrc.json",".eslintrc.cjs"]} },
-  { id: "spring", detect: {"configFiles":["pom.xml","build.gradle","build.gradle.kts"],"extensions":[".java",".kt"]}, commands: ["endpoint"] },
-  { id: "laravel", detect: {"configFiles":["artisan","composer.json"],"extensions":[".php"]}, commands: ["migration"] },
-  { id: "rails", detect: {"configFiles":["config/application.rb","bin/rails"],"extensions":[".rb"]}, commands: ["migration"] },
+  { id: "spring", detect: {"packagePatterns":[/^org\.springframework\.boot(:|$)/]}, commands: ["endpoint"] },
+  { id: "laravel", detect: {"packages":["laravel/framework"],"configFiles":["artisan"]}, commands: ["migration"] },
+  { id: "rails", detect: {"packages":["rails"],"configFiles":["config/application.rb","bin/rails"]}, commands: ["migration"] },
   { id: "dotnet", detect: {"extensions":[".csproj",".cs",".sln"]}, commands: ["endpoint"] },
   { id: "terraform", detect: {"extensions":[".tf"]} },
+  // Base languages (spec 001, RF-10/11/15/16): a rule only, no commands. Appended last so the
+  // detection order for JS projects is unchanged (RF-14).
+  { id: "java", detect: {"configFiles":["pom.xml"],"extensions":[".java"]} },
+  { id: "kotlin", detect: {"extensions":[".kt"]} },
+  { id: "php", detect: {"configFiles":["composer.json"],"extensions":[".php"]} },
+  { id: "ruby", detect: {"configFiles":["Gemfile"],"extensions":[".rb"]} },
 ];
 
 const ruleTemplates = loadRules();

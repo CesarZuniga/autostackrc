@@ -152,8 +152,10 @@ async function main(): Promise<void> {
 
   const projectDir = resolve(".");
   write(dim("   Scanning project...\r"));
-  const stack = detectStack(projectDir);
+  const traces: string[] = [];
+  const stack = detectStack(projectDir, { onTrace: args.verbose ? (m) => traces.push(m) : undefined });
   write("\x1b[K");
+  for (const t of traces) log(dim(`     ${t}`));
 
   if (stack.techs.length === 0) {
     log(yellow("   ⚠ No supported technologies detected."));

@@ -13,7 +13,9 @@ npx autostackrc
 
 ## How it works
 
-1. **Detect** — scans `package.json`, config files, and file extensions to identify your stack.
+1. **Detect** — scans dependency manifests (`package.json`, `pyproject.toml`, `requirements*.txt`, `pom.xml`,
+   `build.gradle(.kts)`, `*.csproj`, `composer.json`, `Gemfile`), config files, and file extensions to identify
+   your stack. Frameworks are only reported when you actually depend on them (e.g. Spring Boot vs. plain Java).
 2. **Assemble** — builds a baseline of rules + commands from static templates (offline, auditable).
 3. **Enrich** — hands the baseline to *your installed AI coder CLI* (using its existing login session,
    **no API key**) to make the rules specific and correct for your stack.
@@ -55,9 +57,30 @@ npx autostackrc                        Detect, generate, write (interactive)
   --no-llm          Skip enrichment, emit static templates only
   --coder <id>      Force coder CLI: claude, opencode, cursor-agent
   --model <id>      Model hint passed to the coder CLI (if supported)
-  -v, --verbose     Show traces and error detail
+  -v, --verbose     Show traces and error detail (incl. skipped malformed manifests)
   -h, --help        Show this help
 ```
+
+## Spec-Driven Development (in progress)
+
+> **Not available yet — planned for v0.1.0.** Today autostackrc generates rules and commands per stack.
+
+In the next release, every run will also generate a complete **Spec-Driven Development** harness, adapted to
+your stack (your real test command: `vitest`, `pytest`, `dotnet test`, `go test`…) and to each assistant:
+
+| Piece          | What it generates                                                                                       |
+| -------------- | ------------------------------------------------------------------------------------------------------- |
+| Slash commands | `/sdd-constitution` `/sdd-spec` `/sdd-clarify` `/sdd-plan` `/sdd-tasks` `/sdd-implement` `/sdd-validate` `/sdd-change` `/sdd-status` |
+| Skill          | `sdd` — workflow, spec template, EARS requirements, testability guide for your language                 |
+| Agents         | `coordinator`, `planner`, `implementer`, `reviewer` with least-privilege permissions                    |
+| Project docs   | `docs/constitution.md`, `MEMORY.md`, `specs/NNN-name/{spec,plan,tasks}.md` — created once, never overwritten |
+| CLI            | `npx autostackrc sdd check` (CI: EARS lint + requirement→test traceability), `sdd status`, `update`      |
+
+Flow: **constitution → spec → clarify → plan → tasks → implement (tests first, one task at a time) → validate**,
+with your approval at each gate.
+
+autostackrc is being built with this same workflow: see [`docs/constitution.md`](./docs/constitution.md),
+[`docs/adr/`](./docs/adr/) and [`specs/`](./specs/). Spec 001 (multi-ecosystem detection) is done.
 
 ## Requirements
 

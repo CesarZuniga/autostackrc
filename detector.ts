@@ -1,26 +1,9 @@
 import { existsSync, readFileSync, readdirSync } from "node:fs";
-import { join } from "node:path";
+import { basename, join } from "node:path";
 
 import { TECH_CATALOG } from "./catalog.ts";
 import type { TechDef } from "./catalog.ts";
-
-const SKIP_DIRS = new Set([
-  "node_modules",
-  ".git",
-  "dist",
-  "build",
-  ".next",
-  ".nuxt",
-  ".svelte-kit",
-  ".output",
-  "vendor",
-  "target",
-  "__pycache__",
-  ".venv",
-  "venv",
-  ".turbo",
-  "coverage",
-]);
+import { readManifestDeps, SKIP_DIRS } from "./manifests.ts";
 
 export interface DetectedStack {
   techs: TechDef[];
@@ -29,10 +12,17 @@ export interface DetectedStack {
   frontend: boolean;
 }
 
-function readJson(path: string): Record<string, unknown> | null {
+export interface DetectOptions {
+  /** Receives diagnostic messages, e.g. manifests skipped because they are malformed (RF-12). */
+  onTrace?: (msg: string) => void;
+}
+
+function readJson(path: string, onTrace?: (msg: string) => void): Record<string, unknown> | null {
+  if (!existsSync(path)) return null;
   try {
     return JSON.parse(readFileSync(path, "utf-8"));
-  } catch {
+  } catch (err) {
+    onTrace?.(`skipped ${basename(path)}: ${(err as Error).message}`);
     return null;
   }
 }
@@ -104,9 +94,10 @@ const FRONTEND_IDS = new Set([
   "tailwind",
 ]);
 
-export function detectStack(projectDir: string): DetectedStack {
-  const pkg = readJson(join(projectDir, "package.json"));
+export function detectStack(projectDir: string, opts: DetectOptions = {}): DetectedStack {
+  const pkg = readJson(join(projectDir, "package.json"), opts.onTrace);
   const pkgNames = packageNames(pkg);
+  for (const name of readManifestDeps(projectDir, opts.onTrace)) pkgNames.add(name);
   const exts = collectExtensions(projectDir);
 
   const techs: TechDef[] = [];
